@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Operator</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+<link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">
+<script>
+	layui.use('form', function() {
+		var form = layui.form
+	});
+</script>
+</head>
+<body>
+	<div class="layui-inline" style="margin-left: 15px; margin-top: 10px">
+		<div class="demoTable">
+			<div class="layui-input-inline">
+				<input type="text" name="name" placeholder="请输入用户名..." class="layui-input" id="operator_Search">
+			</div>
+			<button class="layui-btn" data-type="reload" id="operatorSearch" style="margin-left:-4px">查询</button>
+		</div>
+	</div>	
+		<button class="layui-btn" style="margin-top: 10PX" onclick="openwin('添加','../operator/operatorInsert.html','700','420')">新增</button>
+		<table id="operatortable" class="layui-hide" lay-filter="operatorDemo"></table>
+	
+	<script type="text/html" id="barOperator">
+		<!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->
+		<a title="修改"><i class="fa fa-pencil" aria-hidden="true" lay-event="edit"></i></a>
+		<a title="重置密码"><i class="fa fa-repeat" aria-hidden="true" lay-event="resetPass"></i></a>
+	</script>
+	<script>
+		layui.use('table', function() {
+			var table = layui.table;
+			table.render({
+				elem : '#operatortable',
+				height : 445,
+				url : '../Operator/index', //数据接口
+				id : 'operatorTestReload',
+				page : true, //开启分页
+				cols : [ [ //表头,
+				{field : 'nike',title : '用户名',width : 158,align : 'center'},
+				{field : 'name',title : '姓名',width : 140,align : 'center'},
+				{field : 'typename',title : '类别',width : 110,align : 'center',sort:true}, 
+				{field : 'tel',title : '电话',width : 150,align : 'center'},
+				{field : 'statusname',title : '状态',width : 80,align : 'center',sort:true}, 
+				{field : 'comments',title : '备注',width : 145,align : 'center'}, 
+				{fixed : 'right',title : '操作',width : 70,align : 'center',toolbar : '#barOperator'
+				} ] ]
+			});
+			
+			//查询
+			var $ = layui.$, active = {
+			        reload: function(){
+			            var demoReload = $('#demoReload');
+			            table.reload('operatorTestReload', {
+			                where: {
+			                	name : $("#operator_Search").val(),
+			                }
+			            });
+			        }
+			    };
+			$('#operatorSearch').on('click', function(){
+			    var type = $(this).data('type');
+			    active[type] ? active[type].call(this) : '';
+			});
+			
+			
+			//监听工具条
+			  table.on('tool(operatorDemo)', function(obj){
+			    var data = obj.data;
+			    var id = data.id;
+			    if(obj.event === 'edit'){
+			    	layer.open({
+						type : 2,
+						title : '修改',
+						area : ['700px','420px' ],
+						fixed : false, //不固定
+						maxmin : false,
+						content : '../Operator/operatorEdit?id='+id
+					});
+			    } else if(obj.event === 'resetPass'){
+			        layer.confirm('确认重置密码？',{title:'重置'}, function(index){
+			        	$.post("../Operator/updatePass",{id:id},function (json){
+			        		if(json.status>0){
+			        			layer.msg(json.url);
+			        		}
+			        	});
+			            layer.close(index);
+			          });
+			        }
+			  });
+			
+		});
+		
+		layui.use('layer', function() {
+			var layer = layui.layer;
+		});
+		
+		//新增
+		function openwin(title, content, width, height) {
+			layer.open({
+				type : 2,
+				title : title,
+				area : [ width + 'px', height + 'px' ],
+				fixed : false, //不固定
+				maxmin : false,
+				content : content,
+			});
+		}
+		
+	</script>
+</body>
+</html>
