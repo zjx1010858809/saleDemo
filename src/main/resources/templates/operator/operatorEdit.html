@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>项目二</title>
+    <link rel="stylesheet" href="../assets/layui/css/layui.css"/>
+    <script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="../assets/layui/layui.js"></script>
+    <script>
+        console.log('已进入操作员编辑界面');
+        layui.use('form', function () {
+            var form = layui.form
+        });
+    </script>
+</head>
+<body>
+
+<form class="layui-form" action="">
+    <div class="layui-form-item" style="margin-top: 25px">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户名：</label>
+            <div class="layui-input-inline">
+                <#if oper??>
+                <input type="text" name="nike" class="layui-input operatorNike" value="${oper.nike}" readonly>
+                <input type="hidden" name="id" class="layui-input operatorId" value="${oper.id}" readonly>
+                <#else>
+                <input type="text" name="nike" class="layui-input" value="">
+            </#if>
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">手机：</label>
+        <div class="layui-input-inline">
+            <#if oper??>
+            <input type="tel" name="tel" class="layui-input operatorTel" value="${oper.tel}">
+            <#else>
+            <input type="tel" name="tel" class="layui-input">
+        </#if>
+    </div>
+    </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">姓名：</label>
+            <div class="layui-input-inline">
+                <#if oper??>
+                <input type="text" name="name" class="layui-input operatorName" value="${oper.name}">
+                <#else>
+                <input type="text" name="name" class="layui-input">
+            </#if>
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">类别：</label>
+        <div class="layui-input-inline ">
+            <#if oper??>
+            <#if oper.type==0>
+            <input type="radio" name="type" value="0" title="讲师" checked="checked">
+            <input type="radio" name="type" value="1" title="其他">
+            <#else>
+            <input type="radio" name="type" value="0" title="讲师">
+            <input type="radio" name="type" value="1" title="其他" checked="checked">
+        </#if>
+        <#else>
+        <input type="radio" name="type" value="0" title="讲师" checked="">
+        <input type="radio" name="type" value="1" title="其他">
+    </#if>
+    </div>
+    </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-inline">
+                <select name="status" lay-verify="required">
+                    <#if oper??>
+                    <#if oper.status==0>
+                    <option value="0" selected="selected">在职</option>
+                    <option value="1">离职</option>
+                    <#else>
+                    <option value="0">在职</option>
+                    <option value="1" selected="selected">离职</option>
+                </#if>
+                <#else>
+                <option value="0">在职</option>
+                <option value="1">离职</option>
+            </#if>
+            </select>
+        </div>
+    </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-block" style="margin-right:50px">
+            <#if oper??>
+            <textarea placeholder="请输入内容" class="layui-textarea" name="comments">${oper.comments}</textarea>
+            <#else>
+            <textarea placeholder="请输入内容" class="layui-textarea" name="comments"></textarea>
+        </#if>
+    </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block" style="text-align: center;">
+            <#if oper??>
+            <input class="layui-btn" href="javascript:;" onclick="operatorUpdate();" lay-filter="demo1" type="button"
+                   value="提交">
+            <#else>
+            <input class="layui-btn" href="javascript:;" onclick="operatorInsert();" lay-filter="demo1" type="button"
+                   value="提交">
+        </#if>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    //修改
+    function operatorUpdate() {
+        $.post("../Operator/update", $('.layui-form').serialize(), function (json) {
+            if (json.status > 0) {
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+                parent.location.reload();
+
+            } else {
+                layer.msg(json.url);
+            }
+        });
+    };
+
+    //新增
+    function operatorInsert() {
+        var nike = $('input[name="nike"]').val();
+        var tel = $('input[name="tel"]').val();
+        var name = $('input[name="name"]').val();
+        if (nike != "" && tel != "" && name != "") {
+            console.log(123);
+            $.post("../Operator/insert", $('.layui-form').serialize(),
+                function (json) {
+                    if (json.status > 0) {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                        parent.location.reload();
+                    } else {
+                        console.log(json);
+                        layer.msg(json.url);
+                    }
+                });
+        } else {
+            layer.msg('请填写必填项');
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

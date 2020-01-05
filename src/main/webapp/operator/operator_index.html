@@ -22,13 +22,13 @@
 			<button class="layui-btn" data-type="reload" id="operatorSearch" style="margin-left:-4px">查询</button>
 		</div>
 	</div>	
-		<button class="layui-btn" style="margin-top: 10PX" onclick="openwin('添加','../operator/operatorInsert.html','700','420')">新增</button>
+		<button class="layui-btn" style="margin-top: 10PX" onclick="openwin('添加','../Operator/add','700','420')">新增</button>
 		<table id="operatortable" class="layui-hide" lay-filter="operatorDemo"></table>
 	
 	<script type="text/html" id="barOperator">
 		<!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->
 		<a title="修改"><i class="fa fa-pencil" aria-hidden="true" lay-event="edit"></i></a>
-		<a title="重置密码"><i class="fa fa-repeat" aria-hidden="true" lay-event="resetPass"></i></a>
+		<a title="重置密码"><i class="fa fa-repeat" aria-hidden="true" lay-event="resetPwd"></i></a>
 	</script>
 	<script>
 		layui.use('table', function() {
@@ -78,11 +78,11 @@
 						area : ['700px','420px' ],
 						fixed : false, //不固定
 						maxmin : false,
-						content : '../Operator/operatorEdit?id='+id
+						content : '../Operator/edit?id='+id
 					});
-			    } else if(obj.event === 'resetPass'){
+			    } else if(obj.event === 'resetPwd'){
 			        layer.confirm('确认重置密码？',{title:'重置'}, function(index){
-			        	$.post("../Operator/updatePass",{id:id},function (json){
+			        	$.post("../Operator/resetPwd",{id:id},function (json){
 			        		if(json.status>0){
 			        			layer.msg(json.url);
 			        		}
