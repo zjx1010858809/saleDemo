@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+
+</head>
+<body>
+	<form class="layui-form">
+		<div class="layui-form-item" style="margin-top:15px;margin-left:20px">
+			<!-- <div class="layui-input-inline">
+				<select class="querySelect1 layui-unselect " lay-filter="user_querySelect1">
+					<option value="noquery">选择查询方式</option>
+					<option value="student">查询学生</option>
+					<option value="counselor">查询辅导员</option>
+				</select>
+			</div> -->
+			<div class="layui-input-inline student query1">
+				<select class="querySelect11 layui-unselect" lay-filter="user_querySelect11">
+					<option value="noquery">选择查询方式</option>
+					<option value="school">学院专业查询</option>
+					<option value="nameinfo">姓名查询</option>
+					<option value="telinfo">电话查询</option>
+					<!-- <option value="glevel">关注度查询</option>
+					<option value="ylevel">目标意向查询</option>
+					<option value="slevel">报名意向查询</option> -->
+				</select>
+			</div>
+			<!-- <div class="layui-input-inline counselor query1" style="display:none">
+				<select class="querySelect layui-unselect" lay-filter="user_querySelect">
+					<option value="noquery">选择查询方式</option>
+					<option value="school">学校学院查询</option>
+					<option value="nameinfo">姓名查询</option>
+					<option value="telinfo">电话查询</option>
+				</select>
+			</div> -->
+			<div class="layui-input-inline nameinfo query" style="display:none">
+				<input type="text" class="layui-input name" placeholder="姓名...">
+			</div>
+			<div class="layui-input-inline telinfo query" style="display:none">
+				<input type="text" class="layui-input tel" id="userTime" placeholder="电话号码...">
+			</div>
+			<!-- <div class="layui-input-inline glevel query" style="display:none">
+				<select class="glevelSelect layui-unselect">
+					<option value="0">A</option>
+					<option value="1">B</option>
+					<option value="2">C</option>
+					<option value="3">D</option>
+					<option value="4">N</option>
+					<option value="5">Y</option>
+				</select>
+			</div> -->
+			<!-- <div class="layui-input-inline ylevel query" style="display:none">
+				<select class="ylevelSelect layui-unselect">
+					<option value="0">未知</option>
+					<option value="1">考研</option>
+					<option value="2">考公</option>
+					<option value="3">升本</option>
+				</select>
+			</div> -->
+			<!-- <div class="layui-input-inline slevel query" style="display:none">
+				<select class="slevelSelect layui-unselect">
+					<option value="0">未联系</option>
+					<option value="1">已联系</option>
+					<option value="2">预报名</option>
+					<option value="2">已报名</option>
+					<option value="2">终结</option>
+				</select>
+			</div> -->
+			<div class="layui-input-inline school query" style="display:none">
+				<select class="School" lay-filter="user_school">
+					<option value="">请选择学院</option>
+				</select>
+			</div>
+			<div class="layui-input-inline college query" style="display:none">
+				<select class="College">
+					<option value="">请选择专业</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<input class="layui-btn select" type="button" data-type="" id="" value="查询">
+			</div>
+		</div>
+	</form>
+	<table class="layui-hide" id="userTable" lay-filter="demo"></table>
+	<script type="text/html" id="userBar">
+  		<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+  		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  		<!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a> -->
+	</script>
+</body>
+<script>
+	var table;
+	layui.use(['table','layer'], function() {
+		var table = layui.table,
+		layer=layui.layer;
+		
+		table.render({
+			elem : '#userTable',
+			id : 'user_table',
+			height:380,
+			url : '../User/index_json',
+			page : {
+				layout : [ 'limit', 'count', 'prev', 'page', 'next', 'skip' ], //自定义分页布局
+				groups : 1,//只显示 1 个连续页码
+				first : false, //不显示首页
+				last : false, //不显示尾页
+			},
+			cols : [[ 
+					{field : 'name',width : 120,title : '姓名',align:'center'}, 
+					{field : 'school_name',width : 240,title : '学院',align:'center'}, 
+					{field : 'college_name',width : 210,title : '专业',align:'center'}, 
+					{field : 'sexname',width : 80,title : '性别',align:'center'}, 
+					{field : 'qq',width : 160,title : 'qq',align:'center'},
+					{field : 'tel',width : 160,title : '电话',align:'center'}, 
+					//{field : 'typename',width : 90,title : '用户类型',align:'center'}, 
+					{fixed : 'right',title : '操作',toolbar : '#userBar',width : 170,align:'center'}, 
+			]]
+		});
+		
+		//active
+		var $ = layui.$, active = {
+			    noquery : function() {
+			    	table.reload('user_table', { 
+						where : {
+							type : 0,
+							school_id : null,
+							college_id : null,
+							nameinfo : null,
+							telinfo : null,
+							glevel : null,
+							ylevel : null,
+							slevel : null,
+						}
+					});
+			    },
+			  	nameinfo : function() {
+			  		if($(".name").val() == ""){
+						layer.msg("请输入姓名");
+					}else{
+							type = 0;
+			  		table.reload('user_table', {
+						where : {
+							type : type,
+							school_id : null,
+							college_id : null,
+							nameinfo : $(".name").val(),
+							telinfo : null,
+							glevel : null,
+							ylevel : null,
+							slevel : null,
+						}
+					});
+					}
+				},
+				telinfo : function() {
+					if($(".tel").val() == ""){
+						layer.msg("请输入电话");
+					}else{
+							type = 0;
+					table.reload('user_table', {
+						where : {
+							type : type,
+							school_id : null,
+							college_id : null,
+							nameinfo : null,
+							telinfo : $(".tel").val(),
+							glevel : null,
+							ylevel : null,
+							slevel : null,
+						}
+					});
+					}
+				},
+				/* glevel : function() {
+					if($(".querySelect1").val() == "student"){
+						type = 0;
+					}else {
+						type = 1;
+					}
+					table.reload('user_table', { 
+							where : {
+								type : type,
+								school_id : null,
+								college_id : null,
+								nameinfo : null,
+								telinfo : null,
+								glevel : $(".glevelSelect").val(),
+								ylevel : null,
+								slevel : null,
+							}
+						});
+				}, */
+				/* ylevel : function() {
+					if($(".querySelect1").val() == "student"){
+						type = 0;
+					}else {
+						type = 1;
+					}
+						table.reload('user_table', { 
+							where : {
+								type : type,
+								school_id : null,
+								college_id : null,
+								nameinfo : null,
+								telinfo : null,
+								glevel : null,
+								ylevel : $(".ylevelSelect").val(),
+								slevel : null,
+							}
+						});
+				}, */
+				/* slevel : function() {
+					if($(".querySelect1").val() == "student"){
+						type = 0;
+					}else {
+						type = 1;
+					}
+					table.reload('user_table', { 
+							where : {
+								type : type,
+								school_id : null,
+								college_id : null,
+								nameinfo : null,
+								telinfo : null,
+								glevel : null,
+								ylevel : null,
+								slevel : $(".slevelSelect").val(),
+							}
+						});
+				}, */
+				school : function() {
+					if($(".School").val() == ""){
+						layer.msg("请选择学院");
+					}else{
+							type = 0;
+						table.reload('user_table', { 
+							where : {
+								type : type,
+								school_id : $(".School").val(),
+								college_id : $(".College").val(),
+								nameinfo : null,
+								telinfo : null,
+								glevel : null,
+								ylevel : null,
+								slevel : null,
+							}
+						});
+					}
+				},
+			};
+		
+		//点击查询
+		$('.select').on('click', function() {
+			/* if($(".querySelect1").val() == 'counselor'){
+				var querythis = $(".querySelect").val();
+				$('.select').attr("data-type",querythis);
+				
+			}else if($(".querySelect1").val() == 'student'){ */
+				var querythis = $(".querySelect11").val();
+				$('.select').attr("data-type",querythis);
+				
+			/* }else if($(".querySelect1").val() == 'noquery'){
+				var querythis = "noquery";
+				$('.select').attr("data-type",querythis);
+				
+			} */
+			
+			var type = querythis;
+			active[type] ? active[type].call(this) : '';
+		});
+		
+		//监听user_querySelect点击事件
+		layui.use('form', function() {
+			var form = layui.form;
+			form.on('select(user_querySelect1)', function(data){
+				var query1 = $(".querySelect1").val();
+				$(".query1").css("display","none");
+				$(".query").css("display","none");
+				$("."+query1).css("display","block");
+				if(query1 == 'counselor'){
+					table.reload('user_table', {
+						where : {
+							type : 1,
+							school_id : null,
+							college_id : null,
+							nameinfo : null,
+							telinfo : null,
+							glevel : null,
+							ylevel : null,
+							slevel : null,
+						}
+					});
+				}else{
+					table.reload('user_table', {
+						where : {
+							type : 0,
+							school_id : null,
+							college_id : null,
+							nameinfo : null,
+							telinfo : null,
+							glevel : null,
+							ylevel : null,
+							slevel : null,
+						}
+					});
+				}
+			});
+			
+			form.on('select(user_querySelect11)', function(data){
+				var query = $(".querySelect11").val();
+				$(".query").css("display","none");
+				$("."+query).css("display","block");
+			});
+			
+			form.on('select(user_querySelect)', function(data){
+				var query = $(".querySelect").val();
+				$(".query").css("display","none");
+				$("."+query).css("display","block");
+			});
+			
+			$.post("../User/school",function(result){
+			   	var schoolObj = result;
+			   	for(var i = 0;i < schoolObj.length;i++){
+			   		$(".School").append("<option value="+schoolObj[i]['id']+">"+schoolObj[i]['name']+"</option>");
+			   	}
+			   	form.render('select');
+			 });
+			
+			form.on('select(user_school)', function(data){
+				var school_id = $(".School").val();
+				$(".college").css("display","block");
+				$.post("../User/college?school_id="+school_id,function(result){
+				   	var collegeObj = result;
+				   	$(".College").html("");
+				   	for(var i = 0;i < collegeObj.length;i++){
+				   		$(".College").append("<option value="+collegeObj[i]['id']+">"+collegeObj[i]['name']+"</option>");
+				   	}
+				   	form.render('select');
+				 });
+			});
+
+			
+		});
+		
+		
+		//监听工具条
+		 table.on('tool(demo)', function(obj){
+		    var data = obj.data;
+		    var id = data.id;
+		    if(obj.event === 'detail'){
+		      layer.open({
+					type : 2,
+					title:'用户信息',
+					area : [ '700px','420px' ],
+					fixed : false, //不固定
+					maxmin : false,
+					content : '../User/userView?id='+id,
+				});
+		  	} else if(obj.event === 'del'){
+		      layer.confirm('真的删除行么', function(index){
+		        obj.del();
+		        layer.close(index);
+		      });
+		    } else if(obj.event === 'edit'){
+		    	layer.open({
+					type : 2,
+					title:'用户信息',
+					area : [ '700px','420px' ],
+					fixed : false, //不固定
+					maxmin : false,
+					content : '../User/userUpdate?id='+id,
+				});
+		    }
+		 });
+		
+	});
+	
+</script>
+</html>

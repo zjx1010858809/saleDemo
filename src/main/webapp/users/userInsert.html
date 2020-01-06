@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>项目二</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+<script>
+	layui.use('form', function() {
+		var form = layui.form
+	});
+
+	layui.use('form', function() {
+		var form = layui.form;
+		//学校选择下拉框
+
+		$.post("../User/school", function(result) {
+			var schoolObj = result;
+			for (var i = 0; i < schoolObj.length; i++) {
+				$("#userSchool").append(
+						"<option value="+schoolObj[i]['id']+">"
+								+ schoolObj[i]['name'] + "</option>");
+			}
+			$.post("../User/college?school_id=" + schoolObj[0]['id'] + "",
+					function(result) {
+						var collegeObj = result;
+						$("#userCollege").html("");
+						for (var i = 0; i < collegeObj.length; i++) {
+							$("#userCollege").append(
+									"<option value="+collegeObj[i]['id']+">"
+											+ collegeObj[i]['name']
+											+ "</option>");
+						}
+						form.render('select');
+					});
+			form.render('select');
+		});
+
+		//时间选择下拉框--联动
+		form.on('select(collegeSelect)', function(data) {
+			if (data.value.length < 1) {
+				$("#userCollege").html("");
+			} else {
+
+				$.post("../User/college?school_id=" + data.value + "",
+						function(result) {
+							var collegeObj = result;
+							$("#userCollege").html("");
+							for (var i = 0; i < collegeObj.length; i++) {
+								$("#userCollege").append(
+										"<option value="+collegeObj[i]['id']+">"
+												+ collegeObj[i]['name']
+												+ "</option>");
+							}
+							form.render('select');
+						});
+			}
+		});
+	});
+</script>
+</head>
+<body>
+	<form class="layui-form" action="">
+		<div class="layui-tab">
+			<ul class="layui-tab-title">
+				<li class="layui-this">基本信息</li>
+				<li>学校信息</li>
+				<li>其他信息</li>
+			</ul>
+			<div class="layui-tab-content">
+				<div class="layui-tab-item layui-show">
+
+					<div class="layui-form-item" style="margin-top: 25px">
+						<div class="layui-inline">
+							<label class="layui-form-label">用户名：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="nike" class="layui-input" value="">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">姓名：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" class="layui-input">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">姓别：</label>
+							<div class="layui-input-inline">
+								<input type="radio" name="sex" value="0" title="男" checked="">
+								<input type="radio" name="sex" value="1" title="女">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">电话：</label>
+							<div class="layui-input-inline">
+								<input type="number" name="tel" class="layui-input">
+							</div>
+						</div>
+
+					</div>
+					<div class="layui-form-item" style="margin-top: 25px">
+						<div class="layui-inline">
+							<label class="layui-form-label">QQ：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="qq" class="layui-input">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-tab-item">
+					<div class="layui-form-item" style="margin-top: 25px">
+						<div class="layui-inline">
+							<label class="layui-form-label">学院：</label>
+							<div class="layui-input-inline">
+								<select id="userSchool" name="school_id"
+									lay-filter="collegeSelect"></select>
+							</div>
+						</div>
+
+						<div class="layui-inline">
+							<label class="layui-form-label">专业：</label>
+							<div class="layui-input-inline">
+								<select id="userCollege" name="college_id"></select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item" style="margin-top: 25px">
+						<div class="layui-inline">
+							<label class="layui-form-label">班级：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="classinfo" class="layui-input" value="">
+							</div>
+						</div>
+
+						<div class="layui-inline">
+							<label class="layui-form-label">类别：</label>
+							<div class="layui-input-inline">
+								<select name="type" lay-verify="required">
+									<option value=""></option>
+									<option value="0">学生</option>
+									<option value="1">辅导员</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-tab-item">
+					<div class="layui-form-item" style="margin-top: 25px">
+						<div class="layui-inline">
+							<label class="layui-form-label">状态：</label>
+							<div class="layui-input-inline">
+								<select name="status" lay-verify="required">
+									<option value=""></option>
+									<option value="0">正常</option>
+									<option value="1">禁用</option>
+									<option value="0">过期</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">备注：</label>
+						<div class="layui-input-block" style="margin-right: 50px">
+							<textarea placeholder="请输入内容" class="layui-textarea"
+								name="comments"></textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block" style="text-align: center;">
+							<input class="layui-btn" href="javascript:;"
+								onclick="userInsert();" lay-filter="demo1" type="button"
+								value="提交">
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="layui-tab-item">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">报名状态：</label>
+							<div class="layui-input-inline">
+								<select name="slevel" lay-verify="required">
+									<option value=""></option>
+									<option value="0">未联系</option>
+									<option value="1">已联系</option>
+									<option value="2">预报名</option>
+									<option value="3">已报名</option>
+									<option value="4">终结</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">目标意向：</label>
+							<div class="layui-input-inline">
+								<select name="ylevel" lay-verify="required">
+									<option value="0">未定</option>
+									<option value="1">升本</option>
+									<option value="2">考研</option>
+									<option value="3">考公</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item" style="margin-top: 25px">
+						<div class="layui-inline">
+							<label class="layui-form-label">关注度：</label>
+							<div class="layui-input-inline">
+								<select name="glevel" lay-verify="required">
+									<option value=""></option>
+									<option value="0">A</option>
+									<option value="1">B</option>
+									<option value="2">C</option>
+									<option value="3">D</option>
+									<option value="4">N</option>
+									<option value="5">Y</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="layui-inline">
+							<label class="layui-form-label">状态：</label>
+							<div class="layui-input-inline">
+								<select name="status" lay-verify="required">
+									<option value=""></option>
+									<option value="0">正常</option>
+									<option value="1">禁用</option>
+									<option value="0">过期</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-tab-item">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">相关信息：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="info" class="layui-input">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">备注：</label>
+						<div class="layui-input-block" style="margin-right: 50px">
+							<textarea placeholder="请输入内容" class="layui-textarea"
+								name="comments"></textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block" style="text-align: center;">
+							<input class="layui-btn" href="javascript:;"
+								onclick="userInsert();" lay-filter="demo1" type="button"
+								value="提交">
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+	</form>
+	<script>
+		//注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+		layui.use('element', function() {
+			var element = layui.element;
+
+		});
+	</script>
+
+	<script type="text/javascript">
+		function userInsert() {
+			$.post("../User/insert", $('.layui-form').serialize(), function(
+					json) {
+				if (json.status > 0) {
+					alert(json.url);
+					var index = parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+					parent.location.reload();
+				} else {
+					alert(json.url);
+				}
+			});
+		}
+
+		function child(data) {
+			alert(data);
+		}
+	</script>
+</body>
+</html>

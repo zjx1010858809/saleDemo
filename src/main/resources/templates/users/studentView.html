@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>项目二</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+<script>
+
+	var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	parent.layer.title('用户：${userView.nike} 的信息', index)
+
+	layui.use('form', function() {
+		var form = layui.form
+	});
+
+	layui.use('form', function() {
+		var form = layui.form;
+		//学校选择下拉框
+		$.post("../User/school", function(result) {
+			var schoolObj = result;
+			for (var i = 0; i < schoolObj.length; i++) {
+				$("#userSchool").append(
+						"<option value="+schoolObj[i]['id']+">"
+								+ schoolObj[i]['name'] + "</option>");
+			}
+			form.render('select');
+		});
+
+		$.post("../User/college", function(result) {
+			var collegeObj = result;
+			for (var j = 0; j < collegeObj.length; j++) {
+				$("#userCollege").append(
+						"<option value="+collegeObj[j]['id']+">"
+								+ collegeObj[j]['name'] + "</option>");
+			}
+			form.render('select');
+		});
+
+	});
+</script>
+</head>
+<body>
+	<div class="layui-form-item" style="margin-top: 18px">
+		<div class="layui-inline">
+			<label class="layui-form-label">用户名：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="nike" class="layui-input"
+					value="${userView.nike}" disabled>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">姓名：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="name" class="layui-input"
+					value="${userView.name}" disabled>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">性别：</label>
+			<div class="layui-input-inline">
+				<#if userView.sex==0> <input type="text" value="男"
+					class="layui-input" disabled> <#else> <input
+					type="text" value="女" class="layui-input" disabled></#if>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">电话：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="tel" value="${userView.tel}"
+					class="layui-input" disabled>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">QQ：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="qq" value="${userView.qq}"
+					class="layui-input" disabled>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">学院：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="school_name"
+					value="${userView.school_name}" class="layui-input" disabled>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">专业：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="college_name"
+					value="${userView.college_name}" class="layui-input" disabled>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">班级：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="classinfo" value="${userView.classinfo}"
+					class="layui-input" disabled>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">类别：</label>
+			<div class="layui-input-inline">
+				<#if userView.type==0> <input type="text" value="学生"
+					class="layui-input" disabled> <#elseif userView.type==1>
+				<input type="text" value="辅导员" class="layui-input" disabled>
+				<#elseif userView.type==2> <input type="text" value="临时"
+					class="layui-input" disabled></#if>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">状态：</label>
+			<div class="layui-input-inline">
+				<#if userView.status==0> <input type="text" value="正常"
+					class="layui-input" disabled> <#elseif userView.status==1>
+				<input type="text" value="禁用" class="layui-input" disabled>
+				<#elseif userView.status==2> <input type="text" value="过期"
+					class="layui-input" disabled></#if>
+			</div>
+		</div>
+		<!-- <div class="layui-inline">
+			<label class="layui-form-label">报名状态：</label>
+			<div class="layui-input-inline">
+				<#if userView.slevel==0> <input type="text" value="未联系"
+					class="layui-input" disabled> <#elseif userView.slevel==1>
+				<input type="text" value="已联系" class="layui-input" disabled>
+				<#elseif userView.slevel==2> <input type="text"
+					value="预报名" class="layui-input" disabled> <#elseif
+					userView.slevel==3> <input type="text" value="已报名"
+					class="layui-input" disabled> <#elseif userView.slevel==4>
+				<input type="text" value="终结" class="layui-input" disabled></#if>
+			</div>
+		</div> -->
+	</div>
+	<!-- <div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">目标意向：</label>
+			<div class="layui-input-inline">
+				<#if userView.ylevel==0> <input type="text" value="未联系"
+					class="layui-input" disabled> <#elseif userView.ylevel==1>
+				<input type="text" value="已联系" class="layui-input" disabled>
+				<#elseif userView.ylevel==2> <input type="text"
+					value="预报名" class="layui-input" disabled> <#elseif
+					userView.ylevel==3> <input type="text" value="已报名"
+					class="layui-input" disabled></#if>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">关注度：</label>
+			<div class="layui-input-inline">
+				<#if userView.glevel==0> <input type="text" value="A"
+					class="layui-input" disabled> <#elseif userView.glevel==1>
+				<input type="text" value="B" class="layui-input" disabled> <#elseif
+					userView.glevel==2> <input type="text" value="C"
+					class="layui-input" disabled> <#elseif userView.glevel==3>
+				<input type="text" value="D" class="layui-input" disabled> <#elseif
+					userView.glevel==4> <input type="text" value="N"
+					class="layui-input" disabled> <#elseif userView.glevel==5>
+				<input type="text" value="Y" class="layui-input" disabled></#if>
+			</div>
+		</div>
+	</div> -->
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">其他信息：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="info" value="${userView.info}"
+					class="layui-input" disabled>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">备注：</label>
+		<div class="layui-input-block" style="margin-right: 50px">
+			<textarea placeholder="请输入内容" class="layui-textarea" name="comments"
+				readonly="readonly">${userView.comments}</textarea>
+		</div>
+	</div>
+</body>
+</html>

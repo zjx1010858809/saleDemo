@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>项目二</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+<script>
+	var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	parent.layer.title('用户：${userView.nike} 的信息', index)
+
+	layui.use('form', function() {
+		var form = layui.form
+	});
+
+	layui.use('form', function() {
+		var form = layui.form;
+		/* //学校选择下拉框
+		$.post("../User/school", function(result) {
+			var schoolObj = result;
+			for (var i = 0; i < schoolObj.length; i++) {
+				$("#userSchool").append(
+						"<option value="+schoolObj[i]['id']+">"
+								+ schoolObj[i]['name'] + "</option>");
+			}
+			form.render('select');
+		});
+
+		$.post("../User/college", function(result) {
+			var collegeObj = result;
+			for (var j = 0; j < collegeObj.length; j++) {
+				$("#userCollege").append(
+						"<option value="+collegeObj[j]['id']+">"
+								+ collegeObj[j]['name'] + "</option>");
+			}
+			form.render('select');
+		}); */
+
+	});
+</script>
+</head>
+<body>
+	<div class="layui-form-item" style="margin-top: 28px">
+		<div class="layui-inline">
+			<label class="layui-form-label">姓名：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="name" class="layui-input"
+					value="${userView.name}" disabled>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">类别：</label>
+			<div class="layui-input-inline">
+				<#if userView.type==0> 
+					<input type="text" value="讲师" class="layui-input" disabled>
+				<#else> 
+					<input type="text" value="其他" class="layui-input" disabled>
+				</#if>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">电话：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="tel" value="${userView.tel}"
+					class="layui-input" disabled>
+			</div>
+		</div>	
+	</div>
+
+</body>
+</html>

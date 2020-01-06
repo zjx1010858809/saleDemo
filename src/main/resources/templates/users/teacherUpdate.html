@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>项目二</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+<script>
+
+	var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	parent.layer.title('用户：${userUpdate.nike} 的信息', index)
+
+	layui.use('form', function() {
+		var form = layui.form
+	});
+	
+	layui.use('form', function() {
+		var form = layui.form;
+		//学校选择下拉框
+		$.post("../User/school",function(result){
+		   	var schoolObj = result;
+		   	for(var i = 0;i < schoolObj.length;i++){
+		   		
+		   		if(${userUpdate.school_id}==schoolObj[i]['id']){
+		   			$("#userSchool").append("<option selected='selected' value="+schoolObj[i]['id']+">"+schoolObj[i]['name']+"</option>");
+		   		}else{
+		   			$("#userSchool").append("<option value="+schoolObj[i]['id']+">"+schoolObj[i]['name']+"</option>");
+		   		}
+		   	}
+		   	form.render('select');
+		  });
+		
+		//学院选择下拉框--联动
+		form.on('select(schoolselect)', function(data){
+			if(data.value.length<1){
+				$("#userCollege").html("");
+			}else{
+		
+		$.post("../User/college?school_id="+data.value+"",function(result){
+		   	var collegeObj = result;
+		   	$("#userCollege").html("");
+		   	for(var j = 0;j < collegeObj.length;j++){
+		   		
+		   		if(${userUpdate.college_id}==collegeObj[j]['id']){
+		   			$("#userCollege").append("<option selected='selected' value="+collegeObj[j]['id']+">"+collegeObj[j]['name']+"</option>");
+		   		}else{
+		   			$("#userCollege").append("<option value="+collegeObj[j]['id']+">"+collegeObj[j]['name']+"</option>");
+		   		}
+		   		
+		   		
+		   		$("#userCollege").append("<option value="+collegeObj[j]['id']+">"+collegeObj[j]['name']+"</option>");
+		   	}
+		   	form.render('select');
+		  });
+			}
+		});
+		
+	});
+</script>
+</head>
+<body>
+	<form class="layui-form" action="">
+		<div class="layui-form-item" style="margin-top: 25px">
+			<div class="layui-inline">
+				<label class="layui-form-label">姓名：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="name" class="layui-input"
+						value="${userUpdate.name}">
+				</div>
+			</div>
+		
+			<div class="layui-inline">
+				<label class="layui-form-label">性别：</label>
+				<div class="layui-input-inline">
+					<select name="sex" lay-verify="required">
+						<#list ["男","女"] as r> <#if userUpdate.sex==r_index>
+						<option value="${r_index}" selected="selected">${r}</option>
+						<#else>
+						<option value="${r_index}">${r}</option></#if> </#list>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">	
+			<div class="layui-inline">
+				<label class="layui-form-label">电话：</label>
+				<div class="layui-input-inline">
+					<input type="tel" name="tel" value="${userUpdate.tel}"
+						class="layui-input">
+				</div>
+			</div>
+		
+			<div class="layui-inline">
+				<label class="layui-form-label">QQ：</label>
+				<div class="layui-input-inline">
+					<input type="tel" name="qq" value="${userUpdate.qq}"
+						class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">	
+			<div class="layui-inline">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-inline">
+					<select name="status" lay-verify="required">
+						<#list ["正常","禁用","过期"] as r> <#if
+							userUpdate.status==r_index>
+						<option value="${r_index}" selected="selected">${r}</option>
+						<#else>
+						<option value="${r_index}">${r}</option></#if> </#list>
+					</select>
+				</div>
+			</div>
+		
+			<div class="layui-inline">
+				<label class="layui-form-label">相关信息：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="info" value="${userUpdate.info}"
+						class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block" style="margin-right: 50px">
+				<textarea placeholder="请输入内容" class="layui-textarea" name="comments">${userUpdate.comments}</textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="text-align: center;">
+				<input class="layui-btn" href="javascript:;" onclick="userUpdate();"
+					lay-filter="demo1" type="button" value="提交">
+				<button type="reset" onclick="userClose();"
+					class="layui-btn layui-btn-primary">返回</button>
+			</div>
+		</div>
+		<script type="text/javascript">
+	function userUpdate(){
+		$.post("../User/update",$('.layui-form').serialize(),function (json){
+			if(json.status>0){
+				var index=parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index);
+				parent.location.reload();
+			} else {
+				alert("修改失败！");
+			} 
+		});
+	}
+	function userClose(){
+				var index=parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index);
+				parent.location.reload();
+	}
+	</script>
+	</form>
+</body>
+</html>
